@@ -13,11 +13,68 @@ short_description: Two-agent LLM recommender with a Nigerian persona overlay
 
 A two-agent LLM recommender: a **user simulator** predicts per-candidate reviews and ratings, a **recommender** ranks by those predictions. A Nigerian persona overlay attaches to the simulator alone, enabling counterfactual cultural-validity evaluation.
 
-> The YAML header above is HuggingFace Spaces deployment metadata. GitHub renders it as a small block at the top; HF reads it to configure the Docker Space. Live API URL: see the *Deployment* section below.
-
 Submission for the **DSN × Bluechip Tech LLM Agent Challenge** (2026).
 
 **Authors.** Johnpaul Okeke Ebube, Eruja Micheal, Emmanuel Solomon — Petroleum and Gas Engineering, University of Lagos.
+
+---
+
+## 🚀 Live API (hosted on HuggingFace Spaces)
+
+| | |
+|---|---|
+| **Interactive Swagger UI** | **https://heisienberg-tandem.hf.space/docs** |
+| **Space page** | https://huggingface.co/spaces/heisienberg/tandem |
+| **Health check** | https://heisienberg-tandem.hf.space/health |
+| **Task A (simulator)** | `POST https://heisienberg-tandem.hf.space/simulator/predict` |
+| **Task B (recommender)** | `POST https://heisienberg-tandem.hf.space/recommender/recommend` |
+
+Try it from your browser at **`/docs`** — fill the JSON request body, click *Execute*, see the live response.
+
+> Free-tier Spaces sleep after extended inactivity. **The first request after a sleep takes ~30 seconds to warm up**; subsequent requests respond in 1–3 s. The container holds a Groq free-tier `GROQ_API_KEY` as a HF Space secret, so live calls go to Llama-3.1-8B-Instant.
+
+### One-liner sanity check
+
+```bash
+curl https://heisienberg-tandem.hf.space/health
+# {"status":"ok","service":"TANDEM","version":"0.1.0"}
+```
+
+### Real Task A response (cultural-on overlay, Igbo Christian persona)
+
+```bash
+curl -X POST https://heisienberg-tandem.hf.space/simulator/predict \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "persona": {
+      "persona_id": "demo_adaeze",
+      "history_window": [{"item_id":"X","rating":5.0,"summary":"shea butter dey work well well for my skin"}],
+      "naija_name": "Adaeze Okonkwo",
+      "ethnic_hint": "Igbo",
+      "religious_hint": "Christian"
+    },
+    "item": {
+      "item_id": "Y",
+      "title": "Clinique iD Custom Blend Hydrator",
+      "brand": "Clinique",
+      "category": "skincare"
+    },
+    "condition": "cultural-on"
+  }'
+```
+
+Response (verbatim from the live Space):
+
+```json
+{
+  "rating": 3.0,
+  "review": "E be like say Clinique iD Custom Blend Hydrator no bad, but e no dey meet my expectations. E no contain dudu-osun or ori, so e no go work well for my deep complexion. Shea butter dey inside, but e no enough to make much difference. I dey prefer natural products like shea butter dey work well well for my skin. Clinique good good, but e no real deal for me.",
+  "model": "llama-3.1-8b-instant",
+  "cached": false
+}
+```
+
+Notice the Naija-Pidgin code-switching (*"E be like say"*, *"no dey"*, *"dey work well well"*), mention of **dudu-osun** (traditional Yoruba black soap), and **ori** (Yoruba for shea butter) — the three layers of the cultural overlay (linguistic, preference, grounding) firing together on a single call.
 
 ---
 
@@ -26,10 +83,11 @@ Submission for the **DSN × Bluechip Tech LLM Agent Challenge** (2026).
 | Deliverable | Where |
 |---|---|
 | **Paper PDF (8 pages)** | `paper/main.pdf` |
-| **Containerized API (Task A + Task B endpoints)** | `Dockerfile`, `docker-compose.yml`, `src/api/main.py` |
+| **Live API on HuggingFace Spaces** | https://heisienberg-tandem.hf.space/docs |
+| **Containerized API (same image, run locally)** | `Dockerfile`, `docker-compose.yml`, `src/api/main.py` |
 | **Code repository** | `src/`, `pyproject.toml`, `Makefile` |
-| **LLM response cache** (~14k entries; lets reviewers reproduce numbers without API access) | `cache/llm_responses.jsonl` |
-| **Live demo log** (curl output from a running container against both endpoints) | `results/api_demo.txt` |
+| **LLM response cache** (~14k entries; reproduces every paper number) | regenerable via `make experiments`; see *Reproducibility* below |
+| **Live demo log** (curl output against both endpoints) | `results/api_demo.txt` |
 | **Pre-registered protocol + supporting docs** (hypotheses, overlay spec, lit notes) | `research/protocol_spec.md`, `research/overlay_spec.md`, `research/literature_evidence.md` |
 
 ---
@@ -60,7 +118,9 @@ make figures                   # regenerate Figures 3, 4, 5 + Table 1
 make pdf                       # rebuild paper/main.pdf (requires Tectonic)
 ```
 
-## Run the live API (Task A + Task B endpoints)
+## Run the live API locally (same Docker image as the HF Space)
+
+If you'd rather run the container on your own machine:
 
 ```bash
 echo 'GROQ_API_KEY=gsk_<your_free_key>' > .env
@@ -84,13 +144,7 @@ curl -X POST http://127.0.0.1:8000/recommender/recommend \
      -d '{"persona": {...}, "candidates": [...], "top_k": 10}'
 ```
 
-A working example of both calls and the exact responses received in our test run is in `results/api_demo.txt`.
-
-## Deployment (HuggingFace Spaces)
-
-The same Docker image runs on **HuggingFace Spaces** as a public live API for judges. The YAML metadata at the top of this README is the Space manifest (`sdk: docker`, `app_port: 8000`). Once deployed, Swagger UI is at `<space-url>/docs` — judges can fire test requests at both endpoints directly from the browser.
-
-Free-tier Spaces sleep after extended inactivity; the first request after a sleep warms the container in ~30 seconds.
+A working example of both calls and the exact responses received in our test run is in `results/api_demo.txt`. **The hosted version on HuggingFace Spaces** (URL at the top of this README) is the same Docker image — judges can hit it from a browser at `/docs` without any local setup.
 
 ## Run the full experiments from scratch (~3 days at Groq free tier)
 
@@ -115,7 +169,7 @@ make eval-from-cache && make figures && make pdf
 │   ├── PREVIEW.md          # Markdown mirror of the paper for quick reading
 │   └── Makefile            # paper-only build
 ├── cache/
-│   └── llm_responses.jsonl # shipped response cache, ~14k entries, ~25 MB
+│   └── llm_responses.jsonl # response cache, ~14k entries, ~47 MB (not in git; regenerable via `make experiments`)
 ├── results/
 │   ├── hypothesis_results.json     # H1–H7 outcomes
 │   ├── task_a_metrics.json         # RMSE/MAE/ROUGE/BERTScore-F1/sim
@@ -163,7 +217,7 @@ make eval-from-cache && make figures && make pdf
 ## License
 
 - Code: MIT.
-- Cultural-overlay specifications and Naija linguistic resources: see `research/phase3_cultural_resources.md` for source-by-source license notes. Shipped artifacts are CC-BY-4.0 or MIT. NaijaSenti-Twitter is referenced but not redistributed.
+- Cultural-overlay specifications and Naija linguistic resources: see `research/cultural_resources.md` for source-by-source license notes. Shipped artifacts are CC-BY-4.0 or MIT. NaijaSenti-Twitter is referenced but not redistributed.
 
 ---
 
