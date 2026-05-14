@@ -1,0 +1,21 @@
+# BCT submission entry point.
+#   docker compose up        --> builds image, starts API on http://localhost:8000
+#   docker compose up --build --> rebuild image after code changes
+
+services:
+  tandem:
+    build: .
+    image: tandem:0.1.0
+    container_name: tandem-api
+    ports:
+      - "8000:8000"
+    env_file: .env
+    environment:
+      # Failsafe defaults; .env values take precedence
+      - PYTHONUNBUFFERED=1
+    volumes:
+      # Mount cache/ from host so the API can use a regenerated cache without rebuilding the image
+      - ./cache:/app/cache
+      # Mount data/ likewise (preprocessed Beauty + personas are small)
+      - ./data:/app/data
+    restart: unless-stopped

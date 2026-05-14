@@ -1,0 +1,34 @@
+=== TANDEM Container API Live Demo ===
+Started:    docker compose up
+Verified:   curl http://127.0.0.1:8000/health
+            {"status":"ok","service":"TANDEM","version":"0.1.0"}
+
+--- Task A — POST /simulator/predict (cultural-on) -----------------------
+Persona:    Adaeze Okonkwo (Igbo, Christian)
+Item:       Clinique iD Custom Blend Moisturizer
+Response:
+  rating: 3.0
+  review: "I dey try dis Clinique moisturizer, but e no too impress me.
+          I like say e light and no clog pores, but e no provide enough
+          moisture for my dudu skin. I dey have combination skin, but
+          Clinique no get formula for melanin-rich skin like mine.
+          I go try and try, but dis one no pass my shea butter and
+          dudu-osun soap. Maybe if dem get formula for ebony skin,
+          I go give am 5 stars."
+  model:   llama-3.1-8b-instant
+  cached:  false
+
+--- Task B — POST /recommender/recommend (3 candidates, cultural-on) ----
+Persona:    Adaeze Okonkwo
+Candidates: Dudu-Osun (B00R001), Clinique (B00R002), Shea Butter (B00R003)
+Ranked:
+  1. B00R001 [rating 5.0]  Dudu-Osun African Black Soap (Tropical Naturals)
+     "I dey love dis Dudu-Osun ... ori (shea butter) and palm kernel oil ...
+      my skin tone be deep ... pass my expectations ..."
+  2. B00R003 [rating 3.0]  100% Pure Shea Butter (Tree Hut)
+     "...expected more moisture for my ebony skin ... too rich for my deep
+      complexion ..."
+  3. B00R002 [rating 3.0]  Clinique iD Custom Moisturizer
+     "...no match with my ebony skin tone ... Clinique, you need to step
+      up your melanin game!"
+  api_calls: 3, cached_hits: 0

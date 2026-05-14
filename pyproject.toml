@@ -1,0 +1,74 @@
+[project]
+name = "tandem"
+version = "0.1.0"
+description = "TANDEM — two-agent LLM recommendation with cultural overlay (BCT LLM Agent Challenge 2026)"
+authors = [{name = "TANDEM team"}]
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+
+dependencies = [
+    # LLM access
+    "groq>=0.11.0",                  # Primary: free Groq API
+    "httpx>=0.27.0",                 # HTTP client for fallbacks
+    "tenacity>=8.2.0",               # Retries with backoff for rate limits
+    "python-dotenv>=1.0.0",          # .env loading
+
+    # Data + retrieval
+    "datasets>=2.18.0",              # HuggingFace datasets (Beauty download)
+    "pandas>=2.2.0",
+    "numpy>=1.26.0",
+    "sentence-transformers>=2.7.0",  # Local embeddings, free
+    "faiss-cpu>=1.8.0",              # Vector store, free
+
+    # Stats + ML
+    "scikit-learn>=1.4.0",           # Naija classifier (TF-IDF + LR)
+    "scipy>=1.12.0",                 # Wilcoxon, KS, bootstrap
+    "statsmodels>=0.14.0",           # OLS for H3 regression
+
+    # Plotting
+    "matplotlib>=3.8.0",
+
+    # Web API (Phase 8 containerization)
+    "fastapi>=0.110.0",
+    "uvicorn[standard]>=0.29.0",
+    "pydantic>=2.6.0",
+
+    # Misc
+    "tqdm>=4.66.0",
+    "rich>=13.7.0",                  # nicer logging
+    "typer>=0.12.0",                 # CLI for run_simulator etc.
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "ruff>=0.4.0",
+    "ipykernel>=6.29.0",
+]
+
+[project.scripts]
+tandem-simulate = "src.agents.simulator:main"
+tandem-recommend = "src.agents.recommender:main"
+tandem-eval = "src.eval.run_all:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "C4", "SIM"]
+ignore = ["E501"]  # line length handled by formatter
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+asyncio_mode = "auto"

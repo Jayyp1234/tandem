@@ -1,0 +1,39 @@
+# Keep the Docker context small.
+# Anything in here is excluded from `docker build`.
+
+.git/
+.github/
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# Secrets — never copied into the image; values come via env_file
+.env
+.env.*
+*.key
+secrets/
+
+# LaTeX intermediates
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/*.synctex.gz
+paper/*.fdb_latexmk
+paper/*.fls
+
+# Research artefacts (markdown only — useful for reviewers but big)
+# Keep research/ in the image so judges can read the methodology docs alongside the API.
+# (Comment the line below if image size becomes a concern.)
+# research/
+
+# OS noise
+.DS_Store
+.idea/
+.vscode/

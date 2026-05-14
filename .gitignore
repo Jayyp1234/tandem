@@ -1,0 +1,61 @@
+# --- Secrets (NEVER commit) ---------------------------------------------
+.env
+.env.local
+.env.*.local
+*.key
+secrets/
+
+# --- Python -------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+*.egg
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# --- uv / poetry --------------------------------------------------------
+uv.lock
+
+# --- Project artefacts ---------------------------------------------------
+# Most of cache/, results/, data/ are TRACKED — they ship with the HuggingFace
+# Space deployment and let reviewers reproduce numbers without API access.
+# Two large files are excluded (HF 10MB / GitHub LFS budget); see README
+# §Deployment for how to obtain them.
+cache/llm_responses.jsonl
+data/beauty_5core/items.jsonl
+*.jsonl.gz
+
+# --- LaTeX intermediates (PDF is committed; intermediates are not) ------
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/*.synctex.gz
+paper/*.fdb_latexmk
+paper/*.fls
+
+# --- macOS / IDE noise --------------------------------------------------
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# --- Pre-scrub research archive (kept locally, NEVER published) ---------
+research_archive_backup/
+
+# --- Hackathon brief PDF (not ours to redistribute) ---------------------
+BCT Hack Brief.pdf
+
+# --- LFS leftovers ------------------------------------------------------
+.gitattributes

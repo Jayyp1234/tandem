@@ -1,0 +1,75 @@
+{
+  "H1": {
+    "hypothesis": "H1",
+    "class": "floor",
+    "effect_size_vs_off": 9.170211875357127,
+    "ci_off": [
+      8.388428701400008,
+      9.962050221308413
+    ],
+    "p_vs_off": 5.864514977873843e-257,
+    "p_vs_noise": 0.20158419075497624,
+    "threshold": 0.3,
+    "passed": false
+  },
+  "H2": {
+    "hypothesis": "H2",
+    "passed": false,
+    "note": "no items match category=skin"
+  },
+  "H3": {
+    "hypothesis": "H3",
+    "class": "substantive",
+    "interaction_beta": 0.00290296962295208,
+    "interaction_p": 0.14151667401096343,
+    "passed": false
+  },
+  "H4": {
+    "hypothesis": "H4",
+    "class": "floor",
+    "cov_noise_mean": 0.2225,
+    "ci_noise": [
+      0.204,
+      0.2435
+    ],
+    "cov_cult_mean": 0.566,
+    "ci_cult": [
+      0.48596249999999996,
+      0.6480374999999999
+    ],
+    "passed": true
+  },
+  "H5": {
+    "hypothesis": "H5",
+    "class": "substantive",
+    "within_mean": 0.08864174280015365,
+    "between_mean": 0.0764937072675167,
+    "u_stat": 116062525314.0,
+    "p_value": 0.0,
+    "passed": true
+  },
+  "H6": {
+    "hypothesis": "H6",
+    "class": "substantive",
+    "delta_mean": 0.024573938587565302,
+    "ci": [
+      0.015878475563246692,
+      0.03287695981298094
+    ],
+    "p_vs_noise": 5.004670813514551e-26,
+    "passed": true
+  },
+  "H7": {
+    "hypothesis": "H7",
+    "class": "C1-falsifier",
+    "decomposed_effect_mean": 0.0245739385875653,
+    "monolithic_effect_mean": 0.024015614132778654,
+    "delta_mean": 0.0005583244547866486,
+    "ci": [
+      -0.005671029986583454,
+      0.006286080449423361
+    ],
+    "passed": false,
+    "note": "if passed=False, the architectural claim is empirically falsified \u2014 report honestly"
+  }
+}

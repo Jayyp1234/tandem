@@ -1,0 +1,279 @@
+% References — TANDEM paper
+% Every entry verified via the arXiv abstract page or ACL Anthology in May 2026.
+% Notes in each entry indicate what each citation supports in the paper.
+
+% =========== Anchor papers (lineage we extend) =========================
+
+@misc{wang2023recagent,
+  title  = {{User Behavior Simulation with Large Language Model based Agents}},
+  author = {Wang, Lei and Zhang, Jingsen and Yang, Hao and Chen, Zhi-Yuan and Tang, Jiakai and Zhang, Zeyu and Chen, Xu and Lin, Yankai and Sun, Hao and Song, Ruihua and Zhao, Wayne Xin and Xu, Jun and Dou, Zhicheng and Wang, Jun and Wen, Ji-Rong},
+  year   = {2023},
+  eprint = {2306.02552},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.IR},
+  url    = {https://arxiv.org/abs/2306.02552},
+  note   = {Anchor: founding LLM-as-user-simulator paradigm; Profile + Memory + Action triad we adopt.}
+}
+
+@inproceedings{zhang2024agent4rec,
+  title     = {{On Generative Agents in Recommendation}},
+  author    = {Zhang, An and Chen, Yuxin and Sheng, Leheng and Wang, Xiang and Chua, Tat-Seng},
+  booktitle = {Proceedings of the 47th International ACM SIGIR Conference on Research and Development in Information Retrieval (SIGIR)},
+  year      = {2024},
+  eprint    = {2310.10108},
+  archiveprefix = {arXiv},
+  url       = {https://arxiv.org/abs/2310.10108},
+  note      = {Anchor: 1{,}000-agent simulator with profile/memory/action; Agent4Rec is the paper we position TANDEM relative to architecturally.}
+}
+
+@inproceedings{zhang2024agentcf,
+  title     = {{AgentCF: Collaborative Learning with Autonomous Language Agents for Recommender Systems}},
+  author    = {Zhang, Junjie and Hou, Yupeng and Xie, Ruobing and Sun, Wenqi and McAuley, Julian and Zhao, Wayne Xin and Lin, Leyu and Wen, Ji-Rong},
+  booktitle = {Proceedings of the ACM Web Conference (WWW)},
+  year      = {2024},
+  eprint    = {2310.09233},
+  archiveprefix = {arXiv},
+  url       = {https://arxiv.org/abs/2310.09233},
+  note      = {Method comparison: user-and-item agents with collaborative reflection; we use user-as-agent only.}
+}
+
+@inproceedings{wang2024recmind,
+  title     = {{RecMind: Large Language Model Powered Agent for Recommendation}},
+  author    = {Wang, Yancheng and Jiang, Ziyan and Chen, Zheng and Yang, Fan and Zhou, Yingxue and Cho, Eunah and Fan, Xing and Huang, Xiaojiang and Lu, Yanbin and Yang, Yingzhen},
+  booktitle = {Findings of the Association for Computational Linguistics: NAACL},
+  year      = {2024},
+  eprint    = {2308.14296},
+  archiveprefix = {arXiv},
+  url       = {https://arxiv.org/abs/2308.14296},
+  note      = {Anchor: LLM-agent + tools + Self-Inspiring planner; closest agentic-rec prior architecturally.}
+}
+
+@inproceedings{bao2023tallrec,
+  title     = {{TALLRec: An Effective and Efficient Tuning Framework to Align Large Language Model with Recommendation}},
+  author    = {Bao, Keqin and Zhang, Jizhi and Zhang, Yang and Wang, Wenjie and Feng, Fuli and He, Xiangnan},
+  booktitle = {Proceedings of the 17th ACM Conference on Recommender Systems (RecSys)},
+  year      = {2023},
+  pages     = {1007--1014},
+  eprint    = {2305.00447},
+  archiveprefix = {arXiv},
+  url       = {https://arxiv.org/abs/2305.00447},
+  note      = {Anchor: instruction-tuning LLM for rec with $<$100 samples; we cite for feasibility of small-data alignment.}
+}
+
+@inproceedings{geng2022p5,
+  title     = {{Recommendation as Language Processing (RLP): A Unified Pretrain, Personalized Prompt \& Predict Paradigm (P5)}},
+  author    = {Geng, Shijie and Liu, Shuchang and Fu, Zuohui and Ge, Yingqiang and Zhang, Yongfeng},
+  booktitle = {Proceedings of the 16th ACM Conference on Recommender Systems (RecSys)},
+  year      = {2022},
+  eprint    = {2203.13366},
+  archiveprefix = {arXiv},
+  url       = {https://arxiv.org/abs/2203.13366},
+  note      = {Anchor: recommendation-as-language-processing framing; P5 numbers used as a baseline.}
+}
+
+% =========== Sequential-rec baselines ===================================
+
+@inproceedings{kang2018sasrec,
+  title     = {{Self-Attentive Sequential Recommendation}},
+  author    = {Kang, Wang-Cheng and McAuley, Julian},
+  booktitle = {2018 IEEE International Conference on Data Mining (ICDM)},
+  year      = {2018},
+  eprint    = {1808.09781},
+  archiveprefix = {arXiv},
+  url       = {https://arxiv.org/abs/1808.09781},
+  note      = {Baseline: HR@10 = 0.4854 / NDCG@10 = 0.3219 on Amazon Beauty 5-core. Required non-LLM sequential baseline.}
+}
+
+@inproceedings{sun2019bert4rec,
+  title     = {{BERT4Rec: Sequential Recommendation with Bidirectional Encoder Representations from Transformer}},
+  author    = {Sun, Fei and Liu, Jun and Wu, Jian and Pei, Changhua and Lin, Xiao and Ou, Wenwu and Jiang, Peng},
+  booktitle = {Proceedings of the 28th ACM International Conference on Information and Knowledge Management (CIKM)},
+  year      = {2019},
+  eprint    = {1904.06690},
+  archiveprefix = {arXiv},
+  url       = {https://arxiv.org/abs/1904.06690},
+  note      = {Baseline; cite the 2022 replicability study (arXiv:2207.07483) for absolute numbers due to known $3\times$ implementation variance.}
+}
+
+% =========== LLM-rec adjacent ===========================================
+
+@misc{gao2023chatrec,
+  title  = {{Chat-REC: Towards Interactive and Explainable LLMs-Augmented Recommender System}},
+  author = {Gao, Yunfan and Sheng, Tao and Xiang, Youlin and Xiong, Yun and Wang, Haofen and Zhang, Jiawei},
+  year   = {2023},
+  eprint = {2303.14524},
+  archiveprefix = {arXiv},
+  url    = {https://arxiv.org/abs/2303.14524},
+  note   = {Baseline: LLM-as-conversational-shell-over-recommender; we contrast TANDEM's deeper agentic structure.}
+}
+
+@inproceedings{liao2024llara,
+  title     = {{LLaRA: Large Language-Recommendation Assistant}},
+  author    = {Liao, Jiayi and Li, Sihang and Yang, Zhengyi and Wu, Jiancan and Yuan, Yancheng and Wang, Xiang and He, Xiangnan},
+  booktitle = {Proceedings of the 47th International ACM SIGIR Conference on Research and Development in Information Retrieval (SIGIR)},
+  year      = {2024},
+  eprint    = {2312.02445},
+  archiveprefix = {arXiv},
+  url       = {https://arxiv.org/abs/2312.02445},
+  note      = {Method comparison: ID-text fusion via curriculum; we are text-only.}
+}
+
+@misc{ji2023genrec,
+  title  = {{GenRec: Large Language Model for Generative Recommendation}},
+  author = {Ji, Jianchao and Li, Zelong and Xu, Shuyuan and Hua, Wenyue and Ge, Yingqiang and Tan, Juntao and Zhang, Yongfeng},
+  year   = {2023},
+  eprint = {2307.00457},
+  archiveprefix = {arXiv},
+  url    = {https://arxiv.org/abs/2307.00457},
+  note   = {Method comparison: generative-vs-discriminative; we adopt generative for the simulator side.}
+}
+
+@article{li2022pepler,
+  title    = {{Personalized Prompt Learning for Explainable Recommendation}},
+  author   = {Li, Lei and Zhang, Yongfeng and Chen, Li},
+  journal  = {ACM Transactions on Information Systems (TOIS)},
+  year     = {2023},
+  eprint   = {2202.07371},
+  archiveprefix = {arXiv},
+  url      = {https://arxiv.org/abs/2202.07371},
+  note     = {Related work: personalized prompts as user representation; relevant to our overlay-as-prompt design.}
+}
+
+@inproceedings{wei2024llmrec,
+  title     = {{LLMRec: Large Language Models with Graph Augmentation for Recommendation}},
+  author    = {Wei, Wei and Ren, Xubin and Tang, Jiabin and Wang, Qinyong and Su, Lixin and Cheng, Suqi and Wang, Junfeng and Yin, Dawei and Huang, Chao},
+  booktitle = {Proceedings of the 17th ACM International Conference on Web Search and Data Mining (WSDM)},
+  year      = {2024},
+  eprint    = {2311.00423},
+  archiveprefix = {arXiv},
+  url       = {https://arxiv.org/abs/2311.00423},
+  note      = {Related work: LLM-as-data-augmenter framing; we are LLM-as-user-model.}
+}
+
+% =========== Survey & taxonomy ==========================================
+
+@article{wu2024survey,
+  title    = {{A Survey on Large Language Models for Recommendation}},
+  author   = {Wu, Likang and Zheng, Zhi and Qiu, Zhaopeng and Wang, Hao and Gu, Hongchao and Shen, Tingjia and Qin, Chuan and Zhu, Chen and Zhu, Hengshu and Liu, Qi and Xiong, Hui and Chen, Enhong},
+  journal  = {World Wide Web Journal},
+  year     = {2024},
+  eprint   = {2305.19860},
+  archiveprefix = {arXiv},
+  url      = {https://arxiv.org/abs/2305.19860},
+  note     = {Vocabulary: DLLM4Rec / GLLM4Rec taxonomy and modeling-pattern split.}
+}
+
+% =========== Cultural / Naija ===========================================
+
+@inproceedings{adelani2024naija,
+  title     = {{Does Generative AI speak Nigerian-Pidgin?: Issues about Representativeness and Bias for Multilingualism in LLMs}},
+  author    = {Adelani, David Ifeoluwa and Do{\u{g}}ru{\"o}z, A. Seza and Shode, Iyanuoluwa and Aremu, Anuoluwapo},
+  booktitle = {Findings of the Association for Computational Linguistics: NAACL},
+  year      = {2025},
+  eprint    = {2404.19442},
+  archiveprefix = {arXiv},
+  url       = {https://arxiv.org/abs/2404.19442},
+  note      = {Gap evidence for cultural-overlay claim: WAPE-vs-Naija distinction, Naija underrepresentation, register-specific bias.}
+}
+
+% =========== Near-collisions and recent LLM-rec literature ==============
+
+@inproceedings{kim2025exp3rt,
+  title     = {{Review-driven Personalized Preference Reasoning with Large Language Models for Recommendation (EXP3RT)}},
+  author    = {Kim, Jieyong and Kim, Hyunseo and Cho, Hyunjin and Kang, SeongKu and Chang, Buru and Yeo, Jinyoung and Lee, Dongha},
+  booktitle = {Proceedings of the 48th International ACM SIGIR Conference on Research and Development in Information Retrieval (SIGIR)},
+  year      = {2025},
+  eprint    = {2408.06276},
+  archiveprefix = {arXiv},
+  url       = {https://arxiv.org/abs/2408.06276},
+  note      = {CRITICAL near-collision (verified from HTML mirror 2026-05-09): single Llama3-8B fine-tuned for sequential profile/reasoning/rating, scalar ratings only, inference-time reranking. We differentiate on (a) decomposition into two distinct LLM agents and (b) full review-text emission rather than scalar logits.}
+}
+
+@inproceedings{zhao2024toolrec,
+  title     = {{Let Me Do It For You: Towards LLM Empowered Recommendation via Tool Learning (ToolRec)}},
+  author    = {Zhao, Yuyue and Wu, Jiancan and Wang, Xiang and Tang, Wei and Wang, Dingxian and de Rijke, Maarten},
+  booktitle = {Proceedings of the 47th International ACM SIGIR Conference on Research and Development in Information Retrieval (SIGIR)},
+  year      = {2024},
+  eprint    = {2405.15114},
+  archiveprefix = {arXiv},
+  url       = {https://arxiv.org/abs/2405.15114},
+  note      = {Near-collision: LLM-as-in-context-surrogate-user issuing tool calls. We differentiate on learned-vs-in-context and prediction-as-score-vs-tool-call.}
+}
+
+@inproceedings{wei2026usermirrorer,
+  title     = {{Mirroring Users: Towards Building Preference-aligned User Simulator with User Feedback in Recommendation}},
+  author    = {Wei, Tianjun and Guo, Huizhong and Du, Yingpeng and Sun, Zhu and Chen, Huang and Wang, Dongxia and Zhang, Jie},
+  booktitle = {Proceedings of the 64th Annual Meeting of the Association for Computational Linguistics (ACL)},
+  year      = {2026},
+  eprint    = {2508.18142},
+  archiveprefix = {arXiv},
+  url       = {https://arxiv.org/abs/2508.18142},
+  note      = {Differentiation: simulator augments offline TRAINING of non-LLM RS; we use simulator at inference time within an LLM agent.}
+}
+
+@misc{liu2025recoworld,
+  title  = {{RecoWorld: Building Simulated Environments for Agentic Recommender Systems}},
+  author = {Liu, Fei and Lin, Xinyu and Yu, Hanchao and others},
+  year   = {2025},
+  eprint = {2509.10397},
+  archiveprefix = {arXiv},
+  url    = {https://arxiv.org/abs/2509.10397},
+  note   = {Differentiation: simulator outputs are RL reward signals; ours are inference-time rerank scores.}
+}
+
+@misc{wang2025feedback,
+  title  = {{User Feedback Alignment for LLM-powered Exploration in Large-scale Recommendation Systems}},
+  author = {Wang, Jianling and Liu, Yifan and Sun, Yinghao and Ma, Xuejian and Wang, Yueqi and Ma, He and Su, Steven and Chi, Ed H. and Chen, Minmin and Hong, Lichan and Han, Ningren and Lu, Haokai},
+  year   = {2025},
+  eprint = {2504.05522},
+  archiveprefix = {arXiv},
+  url    = {https://arxiv.org/abs/2504.05522},
+  note   = {Differentiation: alignment model trained on aggregate cluster-level feedback, not per-user simulator.}
+}
+
+% =========== Naija linguistic resources =================================
+
+@inproceedings{adelani2022mafand,
+  title     = {{A Few Thousand Translations Go a Long Way! Leveraging Pre-trained Models for African News Translation}},
+  author    = {Adelani, David and Alabi, Jesujoba and others},
+  booktitle = {Proceedings of NAACL-HLT},
+  year      = {2022},
+  note      = {MAFAND-MT corpus, CC-BY-4.0-NC; used as Naija reference data for the H6 classifier training.}
+}
+
+@inproceedings{muhammad2022naijasenti,
+  title     = {{NaijaSenti: A Nigerian Twitter Sentiment Corpus for Multilingual Sentiment Analysis}},
+  author    = {Muhammad, Shamsuddeen Hassan and Adelani, David Ifeoluwa and Ruder, Sebastian and Ahmad, Ibrahim Said and Abdulmumin, Idris and Bello, Bello Shehu and Choudhury, Monojit and Emezue, Chris Chinenye and Abdullahi, Saheed Salahudeen and Aremu, Anuoluwapo and others},
+  booktitle = {Proceedings of LREC},
+  year      = {2022},
+  note      = {Referenced in paper for comparative context; NOT shipped with repo (CC-BY-NC-SA-4.0 license).}
+}
+
+@article{adelani2023masakhanews,
+  title    = {{MasakhaNEWS: News Topic Classification for African Languages}},
+  author   = {Adelani, David Ifeoluwa and Masiak, Marek and Azime, Israel Abebe and Alabi, Jesujoba and others},
+  journal  = {arXiv preprint},
+  year     = {2023},
+  eprint   = {2304.09972},
+  archiveprefix = {arXiv},
+  url      = {https://arxiv.org/abs/2304.09972},
+  note     = {Naija (pcm) news subset used as Naija-side training data for the H6 classifier.}
+}
+
+@inproceedings{ogueji2021afriberta,
+  title     = {{Small Data? No Problem! Exploring the Viability of Pretrained Multilingual Language Models for Low-resourced Languages}},
+  author    = {Ogueji, Kelechi and Zhu, Yuxin and Lin, Jimmy},
+  booktitle = {Proceedings of the 1st Workshop on Multilingual Representation Learning (MRL@EMNLP)},
+  year      = {2021},
+  url       = {https://aclanthology.org/2021.mrl-1.11},
+  note      = {AfriBERTa: pretrained encoder covering Nigerian Pidgin and the Big-3 Nigerian languages; MIT-licensed.}
+}
+
+@inproceedings{alabi2022afroxlmr,
+  title     = {{Adapting Pre-trained Language Models to African Languages via Multilingual Adaptive Fine-Tuning}},
+  author    = {Alabi, Jesujoba and Adelani, David Ifeoluwa and Mosbach, Marius and Klakow, Dietrich},
+  booktitle = {Proceedings of the 29th International Conference on Computational Linguistics (COLING)},
+  year      = {2022},
+  url       = {https://aclanthology.org/2022.coling-1.382},
+  note      = {AfroXLMR: multilingual adaptive fine-tuning of XLM-R for African languages; MIT.}
+}
