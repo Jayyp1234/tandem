@@ -104,7 +104,7 @@ Notice the Naija-Pidgin code-switching (*"E be like say"*, *"no dey"*, *"dey wor
 ## Reproduce the paper numbers in one command (no API calls)
 
 ```bash
-git clone https://github.com/Jayyp1234/BCT-LLM-Agent-Challenge.git && cd BCT-LLM-Agent-Challenge
+git clone https://github.com/Jayyp1234/tandem.git && cd tandem
 make install fetch-artifacts eval-from-cache
 ```
 
