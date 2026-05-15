@@ -27,7 +27,9 @@ Submission for the **DSN × Bluechip Tech LLM Agent Challenge** (2026).
 | **Space page** | https://huggingface.co/spaces/heisienberg/tandem |
 | **Health check** | https://heisienberg-tandem.hf.space/health |
 | **Task A (simulator)** | `POST https://heisienberg-tandem.hf.space/simulator/predict` |
-| **Task B (recommender)** | `POST https://heisienberg-tandem.hf.space/recommender/recommend` |
+| **Task B (recommender, deterministic)** | `POST https://heisienberg-tandem.hf.space/recommender/recommend` |
+| **Task B (agentic — plan → score → reflect)** | `POST https://heisienberg-tandem.hf.space/recommender/recommend-agentic` |
+| **Task B (multi-turn / conversational)** | `POST https://heisienberg-tandem.hf.space/recommender/converse` |
 
 Try it from your browser at **`/docs`** — fill the JSON request body, click *Execute*, see the live response.
 
@@ -75,6 +77,85 @@ Response (verbatim from the live Space):
 ```
 
 Notice the Naija-Pidgin code-switching (*"E be like say"*, *"no dey"*, *"dey work well well"*), mention of **dudu-osun** (traditional Yoruba black soap), and **ori** (Yoruba for shea butter) — the three layers of the cultural overlay (linguistic, preference, grounding) firing together on a single call.
+
+### Real agentic Task B response (plan → score → reflect)
+
+```bash
+curl -X POST https://heisienberg-tandem.hf.space/recommender/recommend-agentic \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "persona": {
+      "persona_id": "demo_agentic_adaeze",
+      "history_window": [{"item_id":"H1","rating":5.0,"summary":"shea butter from Zaron, real natural feel"}],
+      "naija_name": "Adaeze Okonkwo", "ethnic_hint": "Igbo", "religious_hint": "Christian"
+    },
+    "candidates": [
+      {"item_id":"C1","title":"Cetaphil Gentle Skin Cleanser","brand":"Cetaphil","category":"skincare"},
+      {"item_id":"C2","title":"Dudu-Osun African Black Soap","brand":"Tropical Naturals","category":"skincare"},
+      {"item_id":"C3","title":"Tarte Maneater Eyeliner","brand":"Tarte","category":"makeup"},
+      {"item_id":"C4","title":"Zaron Cosmetics Foundation","brand":"Zaron","category":"makeup"}
+    ],
+    "top_k": 3, "reflect_window": 4, "condition": "cultural-on"
+  }'
+```
+
+Response (verbatim from the live Space):
+
+```json
+{
+  "priorities": [
+    "Natural ingredients",
+    "Cruelty-free and vegan-friendly",
+    "Products endorsed by or made by Igbo or Nigerian brands"
+  ],
+  "ranked": [
+    {"item_id":"C2","rank":1,"title":"Dudu-Osun African Black Soap",
+     "predicted_rating":4.0,"reason":"Dudu-Osun is made with natural ingredients like ori and palm kernel oil."},
+    {"item_id":"C4","rank":2,"title":"Zaron Cosmetics Foundation",
+     "predicted_rating":4.0,"reason":"Zaron is endorsed by a Nigerian brand and fits the user's dark skin perfectly."},
+    {"item_id":"C1","rank":3,"title":"Cetaphil Gentle Skin Cleanser",
+     "predicted_rating":3.0,"reason":"Cetaphil has natural-leaning ingredients matching the user's priority."}
+  ],
+  "trace": {
+    "score_order_top_k":   ["C2","C4","C3"],
+    "agentic_order_top_k": ["C2","C4","C1"],
+    "reasoning_calls": 2, "score_calls_total": 4
+  }
+}
+```
+
+The reflector overrode the simulator's higher Tarte rating in service of the planned priority *"products by Igbo or Nigerian brands"* — Cetaphil replaced Tarte in the agentic top-3.
+
+### Real multi-turn / conversational response
+
+```bash
+# Turn 1 — open the session
+curl -X POST https://heisienberg-tandem.hf.space/recommender/converse \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "persona": {
+      "persona_id":"demo_converse_damilola",
+      "history_window":[{"item_id":"H1","rating":5.0,"summary":"loved my Zaron foundation"}],
+      "naija_name":"Damilola Adeyemi","ethnic_hint":"Yoruba","religious_hint":"Muslim"
+    },
+    "candidates":[
+      {"item_id":"C1","title":"Tarte Maneater Eyeliner","brand":"Tarte","category":"makeup"},
+      {"item_id":"C2","title":"Dudu-Osun African Black Soap","brand":"Tropical Naturals","category":"skincare"},
+      {"item_id":"C3","title":"Synthetic Halo-Wire Hair Extension","brand":"Generic","category":"hair"},
+      {"item_id":"C4","title":"Zaron Cosmetics Foundation","brand":"Zaron","category":"makeup"}
+    ],
+    "top_k":3,"condition":"cultural-on"
+  }'
+
+# returns session_id, top-3 ranking, assistant_reply
+
+# Turn 2 — refine via natural-language feedback
+curl -X POST https://heisienberg-tandem.hf.space/recommender/converse \
+  -H 'Content-Type: application/json' \
+  -d '{"session_id":"<from turn 1>","message":"me sef no fit use synthetic, na human hair I dey like"}'
+```
+
+The simulator in turn 2 incorporated the feedback verbatim (its regenerated review of the synthetic-hair candidate quoted *"me sef no fit use synthetic, na human hair I dey like"* back at the user) and dropped that candidate to a 2.0 rating.
 
 ---
 
