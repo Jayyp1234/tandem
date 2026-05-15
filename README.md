@@ -86,7 +86,7 @@ Notice the Naija-Pidgin code-switching (*"E be like say"*, *"no dey"*, *"dey wor
 | **Live API on HuggingFace Spaces** | https://heisienberg-tandem.hf.space/docs |
 | **Containerized API (same image, run locally)** | `Dockerfile`, `docker-compose.yml`, `src/api/main.py` |
 | **Code repository** | `src/`, `pyproject.toml`, `Makefile` |
-| **LLM response cache** (~14k entries; reproduces every paper number) | regenerable via `make experiments`; see *Reproducibility* below |
+| **LLM response cache** (~22k entries; reproduces every paper number) | `make fetch-artifacts` mirrors from [huggingface.co/datasets/heisienberg/tandem-artifacts](https://huggingface.co/datasets/heisienberg/tandem-artifacts) |
 | **Live demo log** (curl output against both endpoints) | `results/api_demo.txt` |
 | **Pre-registered protocol + supporting docs** (hypotheses, overlay spec, lit notes) | `research/protocol_spec.md`, `research/overlay_spec.md`, `research/literature_evidence.md` |
 
@@ -101,21 +101,26 @@ Notice the Naija-Pidgin code-switching (*"E be like say"*, *"no dey"*, *"dey wor
 
 ---
 
-## Reproduce the paper numbers in 30 minutes (no API calls)
+## Reproduce the paper numbers in one command (no API calls)
 
 ```bash
-git clone <repo> && cd <repo>
-pip install -e ".[dev]"        # or:  uv sync
-# Two large artefacts are not in the git history (HF 10 MB / GitHub LFS budget):
-#   cache/llm_responses.jsonl        (~47 MB)
-#   data/beauty_5core/items.jsonl    (~33 MB)
-# Both can be regenerated locally: `make data` rebuilds the Beauty 5-core split;
-# `make experiments` rebuilds the cache (requires a free Groq key).
-# Or request a mirror link from the authors.
-make eval-from-cache           # H1–H7 hypothesis tests from local cache
-make task-a && make task-b     # Task A + Task B metric aggregations
-make figures                   # regenerate Figures 3, 4, 5 + Table 1
-make pdf                       # rebuild paper/main.pdf (requires Tectonic)
+git clone https://github.com/Jayyp1234/BCT-LLM-Agent-Challenge.git && cd BCT-LLM-Agent-Challenge
+make install fetch-artifacts eval-from-cache
+```
+
+That's it. `fetch-artifacts` pulls the two large files (~80 MB total) from a public [HuggingFace Datasets mirror](https://huggingface.co/datasets/heisienberg/tandem-artifacts):
+
+| File | Size | Source |
+|---|---|---|
+| `cache/llm_responses.jsonl` | 47 MB | ~22k cached LLM generations (5-cell matrix + 2 baselines + cold-start head-to-head) |
+| `data/beauty_5core/items.jsonl` | 33 MB | Amazon Beauty 5-core item metadata |
+
+`eval-from-cache` runs H1–H7 + Task A + Task B metric aggregations from the local cache. No API access, no Groq key. Under 30 minutes on a laptop.
+
+For figures, tables, and PDF rebuild:
+
+```bash
+make figures && make pdf       # requires Tectonic for the LaTeX compile
 ```
 
 ## Run the live API locally (same Docker image as the HF Space)
@@ -169,7 +174,7 @@ make eval-from-cache && make figures && make pdf
 │   ├── PREVIEW.md          # Markdown mirror of the paper for quick reading
 │   └── Makefile            # paper-only build
 ├── cache/
-│   └── llm_responses.jsonl # response cache, ~14k entries, ~47 MB (not in git; regenerable via `make experiments`)
+│   └── llm_responses.jsonl # response cache, ~22k entries, ~47 MB (fetch via `make fetch-artifacts`)
 ├── results/
 │   ├── hypothesis_results.json     # H1–H7 outcomes
 │   ├── task_a_metrics.json         # RMSE/MAE/ROUGE/BERTScore-F1/sim
@@ -206,7 +211,7 @@ make eval-from-cache && make figures && make pdf
 
 ## Reproducibility commitments
 
-- **Cache shipped.** ~14,000 LLM generations cached to JSONL and shipped with this submission. `make eval-from-cache` reproduces every paper number with no API calls.
+- **Cache mirrored.** ~22,000 LLM generations cached to JSONL and served from a public HuggingFace Datasets mirror; `make fetch-artifacts && make eval-from-cache` reproduces every paper number with no API calls.
 - **Open-weight model.** Primary system runs on Llama-3.1-8B-Instruct via Groq's free tier — no closed-model dependency.
 - **Pinned versions.** Model ID, temperature, seeds, and tokenizer all pinned in `src/llm/client.py`.
 - **One-command reproduce.** `make eval-from-cache && make figures && make pdf` rebuilds the paper end-to-end in under 30 minutes from a clean clone.

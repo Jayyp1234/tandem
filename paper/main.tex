@@ -66,7 +66,7 @@
 
 % =====================================================================
 \begin{abstract}
-\textsc{Tandem} is a two-agent LLM recommender: a simulator predicts each user's review and 1--5 star rating for every candidate item, and a recommender ranks by those predictions. A Nigerian persona overlay attaches to the simulator alone, enabling counterfactual cultural-validity evaluation. On Amazon Beauty with 20 personas, the overlay produces cultural conditioning that is detectable on three pre-registered substantive axes: cultural-topic coverage rises from 22\% to 57\% (H4); within-persona TF-IDF similarity significantly exceeds between-persona ($p \approx 0$, H5), evidence the simulator internalises the persona rather than parroting prompt tokens; a held-out Naija-vs-English classifier scores cultural-on outputs $\Delta = 0.025$ higher than a length-matched random-token noise control (95\% CI $[0.016, 0.033]$, $p < 10^{-25}$, H6). \textbf{On a cold-start subset --- one history item per persona instead of ten --- \textsc{Tandem} is the only LLM-based method in our evaluation that improves: NDCG@10 doubles from 0.080 to 0.166 and Hit@5 goes $5\times$ on non-overlapping CIs, while matched-protocol P5-zero and Chat-Rec collapse to NDCG@10 = 0.000 and 0.050 respectively.} The decomposed architecture's persona-text reasoning is its native regime; the cold-start improvement falls out of the design. We also pre-registered an architectural falsifier H7 --- whether decomposition amplifies the cultural-classifier effect over a monolithic single-LLM control --- and report it honestly as a null result ($\Delta = 0.0006$). The system ships as a containerised FastAPI service hosted on HuggingFace Spaces, runs entirely on Llama-3.1-8B-Instruct via Groq's free tier, and \texttt{make eval-from-cache} reproduces every paper number from the shipped cache in under thirty minutes.
+\textsc{Tandem} is a two-agent LLM recommender: a simulator predicts each user's review and 1--5 star rating for every candidate item, and a recommender ranks by those predictions. A Nigerian persona overlay attaches to the simulator alone, enabling counterfactual cultural-validity evaluation. On Amazon Beauty with 20 personas, the overlay produces cultural conditioning that is detectable on three pre-registered substantive axes: cultural-topic coverage rises from 22\% to 57\% (H4); within-persona TF-IDF similarity significantly exceeds between-persona ($p \approx 0$, H5), evidence the simulator internalises the persona rather than parroting prompt tokens; a held-out Naija-vs-English classifier scores cultural-on outputs $\Delta = 0.025$ higher than a length-matched random-token noise control (95\% CI $[0.016, 0.033]$, $p < 10^{-25}$, H6). \textbf{On a cold-start subset --- one history item per persona instead of ten --- \textsc{Tandem} is the only LLM-based method in our evaluation that improves: NDCG@10 doubles from 0.080 to 0.166 and Hit@5 goes $5\times$ on non-overlapping CIs, while matched-protocol P5-zero and Chat-Rec collapse to NDCG@10 = 0.000 and 0.050 respectively.} The decomposed architecture's persona-text reasoning is its native regime; the cold-start improvement falls out of the design. We also pre-registered an architectural falsifier H7 --- whether decomposition amplifies the cultural-classifier effect over a monolithic single-LLM control --- and report it honestly as a null result ($\Delta = 0.0006$). The system ships as a containerised FastAPI service hosted on HuggingFace Spaces, runs entirely on Llama-3.1-8B-Instruct via Groq's free tier, and \texttt{make fetch-artifacts \&\& make eval-from-cache} reproduces every paper number from a public HF Datasets cache mirror in under thirty minutes.
 \end{abstract}
 
 % =====================================================================
@@ -97,7 +97,7 @@ The design admits a falsifier for the architectural claim itself (Hypothesis H7,
     \item TANDEM, a two-agent decomposition that supports independent evaluation of each agent and compositional overlays applied to one. The decomposition's empirical value, given H7's null result, is its zero-shot persona-text reasoning behaviour under cold-start: \textsc{Tandem} is the only LLM method in our evaluation whose top-$k$ performance does not collapse when history is truncated to a single item (Table~\ref{tab:coldstart}, \S\ref{sec:method}, \S\ref{sec:results:coldstart}).
 \end{enumerate}
 
-The simulator response cache (${\sim}14{,}000$ entries), preprocessed data, persona definitions, and the H6 classifier weights are shipped with the submission. \texttt{make eval-from-cache \&\& make figures \&\& make pdf} reproduces every number and figure in this paper from a clean clone in under thirty minutes, with no API access required.
+The simulator response cache (${\sim}22{,}000$ entries, ${\sim}47$\,MB) is mirrored on a public HuggingFace Datasets repository; \texttt{make install fetch-artifacts eval-from-cache} reproduces every quantitative claim in this paper from a clean clone in under thirty minutes, with no API access required.
 
 \begin{figure*}[t]
 \centering
@@ -251,9 +251,9 @@ We report SASRec and BERT4Rec results from their original papers (and the 2022 B
 
 \subsection{Protocol}
 
-Each \texttt{(persona, item)} pair is generated under three overlay conditions (overlay-off, noise-on, cultural-on) and two architectures (decomposed, monolithic), giving five active cells (the redundant monolithic-overlay-off cell is dropped). Total simulator calls: $20 \times 100 \times 5 = 10{,}000$. Each LLM baseline (P5-zero, Chat-Rec) adds $20 \times 100 = 2{,}000$ calls. The grand total is $\approx 14{,}000$ calls, all on Llama-3.1-8B-Instruct via Groq's free tier. Wall-clock at the 30-RPM rate limit is $\approx 8$--$10$ hours; total cost is \$0.
+Each \texttt{(persona, item)} pair is generated under three overlay conditions (overlay-off, noise-on, cultural-on) and two architectures (decomposed, monolithic), giving five active cells (the redundant monolithic-overlay-off cell is dropped). Total simulator calls: $20 \times 100 \times 5 = 10{,}000$. Each LLM baseline (P5-zero, Chat-Rec) adds $20 \times 100 = 2{,}000$ calls. The cold-start head-to-head (\S\ref{sec:results:coldstart}) adds another $20 \times 100 \times 3 = 6{,}000$ calls. The grand total is $\approx 20{,}000$ calls, all on Llama-3.1-8B-Instruct via Groq's free tier. Wall-clock at the 30-RPM rate limit is $\approx 11$--$13$ hours; total cash cost is \$0.
 
-Per-call decoding settings: \texttt{temperature$=$0.7}, \texttt{max\_tokens$=$240}, deterministic per-call seeds derived from \texttt{(persona\_id, item\_id, condition, architecture)}. Responses are JSONL-cached and shipped with the submission so reviewers can reproduce numbers without API access.
+Per-call decoding settings: \texttt{temperature$=$0.7}, \texttt{max\_tokens$=$240}, deterministic per-call seeds derived from \texttt{(persona\_id, item\_id, condition, architecture)}. Responses are JSONL-cached and mirrored on HuggingFace Datasets so reviewers can reproduce numbers without API access (Appendix~\ref{app:repro}).
 
 \subsection{Hypotheses}
 \label{sec:exp:hypotheses}
@@ -276,7 +276,7 @@ The Naija-vs-English classifier used for H6 is a TF-IDF ($n$-gram $\in \{1,2\}$)
 
 \subsection{Containerised deployment}
 
-Both Task A and Task B endpoints are exposed by a single FastAPI service in a Docker container (\texttt{docker compose up}, ports the API on \texttt{:8000} with \texttt{/simulator/predict} and \texttt{/recommender/recommend}). A judge can either reproduce the paper numbers from the shipped cache (no API access required) via \texttt{make eval-from-cache}, or run live queries against either endpoint with their own free Groq key. \texttt{make experiments} re-runs the full $\sim$14{,}000-call matrix from scratch in $\sim$3 days at free-tier daily limits, or $\sim$2 hours on Groq's Dev Tier for roughly \$0.44.
+Both Task A and Task B endpoints are exposed by a single FastAPI service in a Docker container (\texttt{docker compose up}, ports the API on \texttt{:8000} with \texttt{/simulator/predict} and \texttt{/recommender/recommend}). The container also runs as a public HuggingFace Space; the live URL is in the README. A judge can either reproduce the paper numbers from a public HF-Datasets cache mirror (no API access required) via \texttt{make fetch-artifacts eval-from-cache}, or run live queries against either endpoint with their own free Groq key. \texttt{make experiments} re-runs the full $\sim$20{,}000-call matrix (main matrix plus cold-start head-to-head) from scratch in $\sim$3 days at free-tier daily limits, or $\sim$2 hours on Groq's Dev Tier for roughly \$0.44.
 
 % =====================================================================
 \section{Results}
@@ -533,23 +533,23 @@ Both task endpoints are served by a single FastAPI application packaged in a Doc
 A judge running \texttt{docker compose up} can hit both endpoints from a curl command with their own free Groq key; the simulator's response cache is shared between the two endpoints so repeated queries cost zero tokens.
 
 \paragraph{Reproducing paper numbers from the shipped cache.}
-\texttt{make eval-from-cache \&\& make figures \&\& make pdf} reproduces every quantitative claim in this paper from a fresh clone in under thirty minutes, requiring no API access. The cache file (\texttt{cache/llm\_responses.jsonl}, $\sim$25\,MB, $\sim$14{,}000 entries) is shipped with the submission.
+\texttt{make install fetch-artifacts eval-from-cache} reproduces every quantitative claim in this paper from a fresh clone in under thirty minutes, requiring no API access. The cache file (\texttt{cache/llm\_responses.jsonl}, ${\sim}47$\,MB, ${\sim}22{,}000$ entries) is mirrored at \texttt{huggingface.co/datasets/heisienberg/tandem-artifacts}.
 
 \paragraph{Compute used.}
-Llama-3.1-8B-Instruct via Groq's free tier; $\approx 14{,}000$ LLM calls (5 cells + 2 baselines), $\sim$574 tokens per call (482 in + 92 out), $\sim$8\,M total tokens. Wall-clock on the free tier was $\sim$3 days across rotating daily-quota cycles; the same matrix re-runs in $\sim$2 hours on Groq's Dev Tier for $\approx$\,\$0.44. Cash cost as submitted: \$0. All other compute (sentence-transformer embeddings, the scikit-learn Naija/English classifier for H6, hypothesis tests, figure generation) ran on local CPU in under fifteen minutes total.
+Llama-3.1-8B-Instruct via Groq's free tier; ${\approx}20{,}000$ LLM calls in total (5-cell main matrix 10k + 2 LLM baselines 4k + cold-start head-to-head 6k), $\sim$574 tokens per call (482 in + 92 out), $\sim$12\,M total tokens. Wall-clock on the free tier was $\sim$3 days across rotating daily-quota cycles; the same matrix re-runs in $\sim$2 hours on Groq's Dev Tier for ${\approx}\$0.60$. Cash cost as submitted: \$0. All other compute (sentence-transformer embeddings, the scikit-learn Naija/English classifier for H6, hypothesis tests, figure generation) ran on local CPU in under fifteen minutes total.
 
-\paragraph{Replication command (from scratch, free tier).}
+\paragraph{Replication commands.}
 {\footnotesize
 \begin{verbatim}
+# Reproduce paper numbers from the public cache mirror (no API key required).
 git clone <repo> && cd <repo>
-echo "GROQ_API_KEY=gsk_<key>" > .env
-uv sync
-make data && make personas
-make experiments
-make eval-from-cache
-make figures && make pdf
+make install fetch-artifacts eval-from-cache figures pdf   # ~30 min
+
+# Or: re-run the full experiment matrix from scratch.
+echo "GROQ_API_KEY=gsk_<your_key>" > .env
+make data personas experiments eval figures pdf            # ~3 days
 \end{verbatim}
 }
-\noindent\texttt{make experiments} takes $\sim$3 days at free-tier daily quota cycles or $\sim$2 hours on Groq Dev Tier; \texttt{make eval-from-cache} takes $\sim$30 minutes and needs no API access.
+\noindent The one-shot \texttt{eval-from-cache} path pulls a $\sim$80\,MB tarball (cache + items) from the public HF Datasets mirror and runs every hypothesis test, ablation, and figure in under thirty minutes on a laptop. \texttt{make experiments} re-runs the $\sim$20{,}000-call matrix (main 14k + cold-start head-to-head 6k) in $\sim$3 days at free-tier daily quota cycles or $\sim$2 hours on Groq Dev Tier ($\approx\$0.44$).
 
 \end{document}

@@ -4,24 +4,46 @@
 PYTHON := python
 UV := uv
 
-.PHONY: help install data personas experiments eval eval-from-cache figures pdf clean check-key smoke
+.PHONY: help install fetch-artifacts data personas experiments eval eval-from-cache figures pdf clean check-key smoke
 
 help:
 	@echo "TANDEM — make targets:"
 	@echo "  install           install dependencies (uv sync)"
+	@echo "  fetch-artifacts   download cache + items.jsonl from HF Datasets (~80 MB)"
 	@echo "  check-key         verify GROQ_API_KEY is set"
 	@echo "  data              download + preprocess Amazon Beauty 5-core"
 	@echo "  personas          construct 20 personas from held-out users"
 	@echo "  experiments       run full 5-cell matrix + baselines (~3 days clock, \$$0)"
 	@echo "  eval              run all H1-H7 hypothesis tests"
-	@echo "  eval-from-cache   reproduce paper numbers from shipped cache (no API calls)"
+	@echo "  eval-from-cache   reproduce paper numbers from local cache (no API calls)"
 	@echo "  figures           generate all paper figures + tables"
 	@echo "  pdf               build paper/main.pdf"
 	@echo "  smoke             tiny end-to-end smoke test (1 persona x 1 item)"
 	@echo "  clean             remove caches and generated artefacts"
+	@echo ""
+	@echo "Fastest reproduce-from-clean-clone:"
+	@echo "  make install fetch-artifacts eval-from-cache"
 
 install:
 	$(UV) sync
+
+# Two large artefacts (cache: ~47 MB; items.jsonl: ~33 MB) are hosted at
+# huggingface.co/datasets/heisienberg/tandem-artifacts (HF Datasets, free
+# public mirror). One `make fetch-artifacts` and `make eval-from-cache`
+# reproduces every paper number from a clean clone in under 30 minutes.
+fetch-artifacts: cache/llm_responses.jsonl data/beauty_5core/items.jsonl
+
+cache/llm_responses.jsonl:
+	@mkdir -p cache
+	curl -L --fail --progress-bar \
+	  -o cache/llm_responses.jsonl \
+	  https://huggingface.co/datasets/heisienberg/tandem-artifacts/resolve/main/cache/llm_responses.jsonl
+
+data/beauty_5core/items.jsonl:
+	@mkdir -p data/beauty_5core
+	curl -L --fail --progress-bar \
+	  -o data/beauty_5core/items.jsonl \
+	  https://huggingface.co/datasets/heisienberg/tandem-artifacts/resolve/main/data/beauty_5core/items.jsonl
 
 check-key:
 	@if [ -z "$$GROQ_API_KEY" ] && [ -z "$$GROQ_API_KEY_1" ] && [ ! -f .env ]; then \
